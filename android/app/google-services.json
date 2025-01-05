@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "102984828092",
+    "project_id": "spring-firefly-438711-j3",
+    "storage_bucket": "spring-firefly-438711-j3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:102984828092:android:a864cb331fa322b9a3bcb9",
+        "android_client_info": {
+          "package_name": "com.umbrella.chattingapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9oLPTx885oPFMMZsF5AHU4QdAyc2Sawc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
