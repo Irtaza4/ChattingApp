@@ -27,10 +27,11 @@ final String curentUserEmail = _auth.currentUser!.email!;
 final Timestamp timestamp = Timestamp.now();
 //create a new message
 Messages newMessage = Messages(
-    senderId: curentUserEmail,
-    senderEmail: currenUserId,
+    senderId: currenUserId,
+    senderEmail: curentUserEmail,
     receiverId: receiveId,
-    message: message, timestamp: timestamp);
+    message: message,
+    timestamp: timestamp);
 //construct chat room ids for two users
 List<String> ids = [currenUserId,receiveId];
 ids.sort();

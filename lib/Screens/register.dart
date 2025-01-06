@@ -7,6 +7,7 @@ class Register extends StatelessWidget {
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
   final TextEditingController _confirmpasswordcontroller = TextEditingController();
+
   final void Function()? onTap;
 
   Register({super.key, required this.onTap});
@@ -69,6 +70,7 @@ class Register extends StatelessWidget {
               const SizedBox(height: 25),
               // Email TextField
               MyTextfield(
+                focusNode: null,
                 hinttext: "Email",
                 obsecureText: false,
                 controller: _emailcontroller,
@@ -76,6 +78,7 @@ class Register extends StatelessWidget {
               const SizedBox(height: 10),
               // Password TextField
               MyTextfield(
+                focusNode: null,
                 hinttext: "Password",
                 obsecureText: true,
                 controller: _passwordcontroller,
@@ -83,6 +86,7 @@ class Register extends StatelessWidget {
               const SizedBox(height: 10),
               // Confirm Password TextField
               MyTextfield(
+                focusNode: null,
                 hinttext: "Confirm Password",
                 obsecureText: true,
                 controller: _confirmpasswordcontroller,

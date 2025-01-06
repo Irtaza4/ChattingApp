@@ -9,6 +9,7 @@ class Login extends StatelessWidget {
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
   final void Function()? onTap;
+
    Login({super.key,required this.onTap});
    void login(BuildContext context)async{
      final authService = AuthService();
@@ -27,6 +28,7 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return  Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
@@ -39,6 +41,7 @@ class Login extends StatelessWidget {
               size: 60,
               color: Theme.of(context).colorScheme.primary,
             ),
+
             SizedBox(height: 50,),
             Text("Welcome back,you've been missed!",style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
@@ -46,15 +49,18 @@ class Login extends StatelessWidget {
             ),),
             SizedBox(height: 25,),
             MyTextfield(
+              focusNode: null,
               hinttext: "Email",
               obsecureText: false,
               controller: _emailcontroller
             ),
             SizedBox(height: 10,),
             MyTextfield(
+              focusNode: null,
               hinttext: "Password",
               obsecureText: true,
               controller: _passwordcontroller,
+
             ),
             SizedBox(height: 25,),
             MyButton(text: "Login",

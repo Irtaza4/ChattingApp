@@ -1,31 +1,71 @@
 import 'package:chattingapp/Services/auth/auth_service.dart';
 import 'package:chattingapp/Services/chat/chat_service.dart';
+import 'package:chattingapp/components/chat_bubble.dart';
 import 'package:chattingapp/components/my_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   final String receivedemail;
   final String receiverID;
-//reci
+
   ChatPage({super.key, required this.receivedemail, required this.receiverID});
 
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
+
   final ChatService _chatService = ChatService();
+
   final AuthService _authService = AuthService();
+  FocusNode myFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    myFocusNode.addListener((){
+      if(myFocusNode.hasFocus){
+        
+        Future.delayed(Duration(milliseconds: 500),()=>scrollDown(),);
+      }
+    });
+    Future.delayed(Duration(milliseconds: 500),()=>scrollDown(),);
+  }
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    super.dispose();
+
+  }
+  final ScrollController _scrollController= ScrollController();
+  void scrollDown(){
+    _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+  }
 
   void sendMessages() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(receiverID, _messageController.text);
+      await _chatService.sendMessage(widget.receiverID, _messageController.text);
       _messageController.clear();
     }
+    scrollDown();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(receivedemail),
+        title:  Text(widget.receivedemail),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor:Theme.of(context).colorScheme.primary ,
       ),
       body: Column(
         children: [
@@ -43,7 +83,7 @@ class ChatPage extends StatelessWidget {
   Widget _buildMessageList() {
     String senderID = _authService.CurrentUser()!.uid;
     return StreamBuilder(
-      stream: _chatService.getMessages(receiverID, senderID),
+      stream: _chatService.getMessages(widget.receiverID, senderID),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(child: Text("Error loading messages."));
@@ -52,6 +92,7 @@ class ChatPage extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         return ListView(
+          controller: _scrollController,
           children: snapshot.data!.docs
               .map((doc) => _buildMessageItem(doc))
               .toList(),
@@ -62,29 +103,24 @@ class ChatPage extends StatelessWidget {
 
   Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: Align(
-        alignment: data["senderID"] == _authService.CurrentUser()!.uid
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        child: Container(
-          padding: const EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: data["senderID"] == _authService.CurrentUser()!.uid
-                ? Colors.blue[200]
-                : Colors.grey[300],
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Text(data["message"]),
-        ),
-      ),
-    );
+
+    bool isCurrentUser =data['senderId'] == _authService.CurrentUser()!.uid;
+    var alignment =
+        isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+
+     return Container(
+         alignment: alignment,
+         child: Column(
+           crossAxisAlignment: isCurrentUser? CrossAxisAlignment.end : CrossAxisAlignment.start,
+           children: [
+             ChatBubble(message: data["message"], isCurrentUser: isCurrentUser)
+           ],
+         ));
   }
 
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(bottom: 35),
       child: Row(
         children: [
           Expanded(
@@ -92,12 +128,21 @@ class ChatPage extends StatelessWidget {
               hinttext: "Type a message",
               obsecureText: false,
               controller: _messageController,
+              focusNode: myFocusNode,
             ),
           ),
-          IconButton(
-            onPressed: sendMessages,
-            icon: const Icon(Icons.send),
-            color: Colors.blue,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
+            margin: EdgeInsets.only(right: 25),
+            child: IconButton(
+              onPressed: sendMessages,
+              icon: const Icon(Icons.send,
+              color: Colors.white,),
+
+            ),
           ),
         ],
       ),
